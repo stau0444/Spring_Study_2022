@@ -1,0 +1,31 @@
+plugins {
+    id 'application'
+}
+
+repositories {
+	mavenCentral()
+}
+
+//프로젝트에 필요한 의존성 추가
+dependencies {
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+    testRuntime 'org.junit.platform:junit-platform-launcher:1.5.1'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+compileJava {
+	options.encoding = 'UTF-8'
+}
+//테스트시 사용할 라이브러리를 지정해 준다
+test{
+    useJUnitPlatform()
+}
+
+application {
+    mainClassName = 'moviebuddy.MovieBuddyApplication'
+}

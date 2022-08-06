@@ -8,19 +8,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author springrunner.kr@gmail.com
  */
 public class MovieFinderTest {
+	final MovieBuddyFactory factory = new MovieBuddyFactory();
+	final MovieFinder movieFinder = factory.movieFinder();
 
 	@Test
-	void find_movie(){
-		MovieReader movieReader = new JaxbMovieReader();
-		MovieFinder movieFinder = new MovieFinder(movieReader);
+	void NotEmpty_directedBy(){
 
 		List<Movie> result = movieFinder.directedBy("Michael Bay");
 		assertEquals(3, result.size());
 
-		result = movieFinder.releasedYearBy(2015);
+	}
+	@Test
+	void NotEmpty_releasedYearBy(){
+
+
+		List<Movie> result = movieFinder.releasedYearBy(2015);
 		assertEquals(225, result.size());
 	}
-
-
-
 }

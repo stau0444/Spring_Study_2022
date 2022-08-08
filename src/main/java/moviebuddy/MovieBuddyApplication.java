@@ -27,6 +27,8 @@ import moviebuddy.domain.MovieBuddyFactory;
 import moviebuddy.domain.MovieFinder;
 import moviebuddy.domain.MovieReader;
 import moviebuddy.util.FileSystemUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * @author springrunner.kr@gmail.com
@@ -47,9 +49,9 @@ public class MovieBuddyApplication {
      */
 
     public void run(String[] args) throws Exception {
+        final ApplicationContext applicationContext = new AnnotationConfigApplicationContext(MovieBuddyFactory.class);
+        final MovieFinder movieFinder = applicationContext.getBean(MovieFinder.class);
 
-        final MovieBuddyFactory factory = new MovieBuddyFactory();
-        final MovieFinder movieFinder = factory.movieFinder();
         final AtomicBoolean running = new AtomicBoolean(true);
         final BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         final PrintWriter output = new PrintWriter(System.out, false);

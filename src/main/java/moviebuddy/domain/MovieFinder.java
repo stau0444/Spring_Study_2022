@@ -1,6 +1,7 @@
 package moviebuddy.domain;
 
 import moviebuddy.Movie;
+import org.springframework.beans.factory.BeanFactory;
 
 import java.util.List;
 import java.util.Objects;

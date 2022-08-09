@@ -2,6 +2,9 @@ package moviebuddy.domain;
 
 import moviebuddy.ApplicationException;
 import moviebuddy.Movie;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -14,11 +17,13 @@ import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Repository
 public class JaxbMovieReader implements MovieReader{
 
 
     @Override
     public List<Movie> loadMovies() {
+        System.out.println("loaded from xml file");
         try {
             final JAXBContext jaxb = JAXBContext.newInstance(MovieMetadata.class);
             final Unmarshaller unmarshaller = jaxb.createUnmarshaller();

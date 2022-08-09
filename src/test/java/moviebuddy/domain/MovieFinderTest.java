@@ -26,7 +26,6 @@ public class MovieFinderTest {
 	@Test
 	void NotEmpty_releasedYearBy(){
 
-
 		List<Movie> result = movieFinder.releasedYearBy(2015);
 		assertEquals(225, result.size());
 	}

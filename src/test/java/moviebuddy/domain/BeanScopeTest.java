@@ -14,6 +14,8 @@ public class BeanScopeTest {
         MovieFinder movieFinder = ctx.getBean(MovieFinder.class);
         MovieFinder movieFinder2 = ctx.getBean(MovieFinder.class);
 
-        Assertions.assertEquals(movieFinder,movieFinder2);
+        Assertions.assertNotEquals(movieFinder,movieFinder2);
     }
 }
+
+

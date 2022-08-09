@@ -3,6 +3,8 @@ package moviebuddy.domain;
 import moviebuddy.ApplicationException;
 import moviebuddy.Movie;
 import moviebuddy.util.FileSystemUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.net.URI;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Repository
 public class CsvMovieReader implements MovieReader {
     /**
      * 영화 메타데이터를 읽어 저장된 영화 목록을 불러온다.
@@ -26,6 +29,7 @@ public class CsvMovieReader implements MovieReader {
 
     @Override
     public List<Movie> loadMovies() {
+        System.out.println("loaded from csv file");
         try {
             final URI resourceUri = ClassLoader.getSystemResource("movie_metadata.csv").toURI();
             final Path data = Path.of(FileSystemUtils.checkFileSystem(resourceUri));

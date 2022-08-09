@@ -150,6 +150,7 @@ $❯ build/moviebuddy/bin/moviebuddy
 > @Configuration : 클래스가 컨테이너의 빈 구성정보로 사용될 목적임을 선언하는 애노테이션 <br/>
   @Bean: 컨테이너에서 등록할 사용할 빈 객체를 생성하고 구성 및 초기화를 선언하는 애노테이션 <br/>
 
+---
 
 ### bean scope
 
@@ -162,6 +163,7 @@ $❯ build/moviebuddy/bin/moviebuddy
 
 > @Scope : 빈에 대한 스코프 방식을 지정해 줄 수 있다 . 
 
+---
 
 ### bean 구성 정보 조합
 
@@ -169,3 +171,55 @@ $❯ build/moviebuddy/bin/moviebuddy
 
 > @Import : 애노테이션을 선언한 클래스에서 필요한 구성정보 클래스를 import 해온다 </br>
  @ImportResource: xml로 정의해놓은 구성정보를 가져온다.  
+
+
+---
+
+### Component scan
+
+- 컴포넌트를 찾아 자동으로 빈으로 등록하고 관리한다.
+
+> @ComponentScan : 지정된 패키지 경로에서 @Component 같은 스테레오 타입의 어노테이션(@Controller , @Service , @Repository)이 붙은 클래스를 찾아 빈으로 등록하고 관리한다.</br>
+> 패키지가 지정되지 않으면 @ComponentScan이 선언된 클래스를 기준으로 찾는다.
+> basePackages옵션으로 컴포넌트 스캔 시작 패키지를 지정할 수 있다. 
+  @Component : 해당 클래스가 ComponentScan의 대상이 되도록한다
+
+
+---
+
+### Auto Wiring
+
+- 컴포넌트가 빈으로 등록될때 @Autowired를 확인하고 의존관계를 자동 주입한다.
+- @Autowired를 생성자에 붙혀 사용하며 생성자가 하나일때는 생략 가능하다.
+-  @Autowired는 기본적으로 생성자의 파라미터 타입을 기준으로 의존관계를 주입한다. 
+
+#### bean 이름 지정
+- @Component("bean이름")으로 해당 빈의 이름을 지정할 수 있다.
+- 스프링 빈은 @Bean으로 직접 등록할시 메서드의 이름이 빈의 이름이 되고
+- @Component등 컴포넌트 스캔에의해 생성될 때는 해당 클래스의 이름이 카멜케이스로 변환되어 빈의 이름이 된다
+
+#### @Autowired  bean  지정 두가지 방법
+- 만약 파라미터 타입이 인터페이스고 구현체가 여러개라면 파라미터 변수의 이름으로 의존관계를 주입하며
+  변수명은 컴포넌트 선언시 정의한 bean의 이름과 매칭된다.
+- @Quailfier를 이용해 주입 되어야 하는 빈을 지정해 줄수도 있다.
+
+````java
+    //bean 이름
+    @Repository("csvReader")
+    public class CsvMovieReader implements MovieReader {};
+    //의존관계 주입시 파라미터 변수명과 빈이름이 매칭된다
+    @Autowired
+    public MovieFinder(MovieReader csvReader) {
+        this.movieReader = Objects.requireNonNull(csvReader);
+    }
+    
+    //@Qualifier 사용
+    @Autowired
+    public MovieFinder(@Qualifier("csvMovieReader") MovieReader csvReader) {
+            this.movieReader = Objects.requireNonNull(csvReader);
+    }
+````
+
+
+
+

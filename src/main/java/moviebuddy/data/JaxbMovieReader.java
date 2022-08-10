@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Profile(MovieBuddyProfile.XML_MODE)
 @Repository
 public class JaxbMovieReader implements MovieReader {
-
+    //git Test
 
     @Override
     public List<Movie> loadMovies() {

@@ -1,6 +1,8 @@
 package moviebuddy.domain;
+import moviebuddy.MovieBuddyProfile;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 //@ExtendWith(SpringExtension.class)
 //테스트 컨텍스트의 빈구성정보를 지정하는 애노테이션
 //@ContextConfiguration(classes = MovieBuddyFactory.class)
+@ActiveProfiles(MovieBuddyProfile.CSV_MODE)
 public class MovieFinderTest {
 
 	@Autowired MovieFinder movieFinder;

@@ -290,6 +290,58 @@ v
 - 스프링은 어떻게 객체가 설계되고 , 만들어지고 , 어떻게 관계를 맺어 사용되는지에 중점을 둔 프레임워크이다.
 - 스프링을 사용만한다고 깨끗하고 유연한 코드가 저절로 만들어지지 않는다.
 
+</br>
+
+---
+
+</br>
+
+### Profile : 환경에 따른 bean 구성 
+</br>
+- 해당 프로젝트에서 MovieFinder는 파일로 부터 영화 목록을 불러오는 역할을 하는 movieReader를 통해 csv,xml 파일로 부터 목록을 불러올 수 있지만 , 둘중 하나만의 기능을 사용할 수 있다. 때문에 만약 두가지 모두 상황에 맞게 동작하게 하려면 csv  버전과 xml 버전으로 나눠 배포해야 할 것이다.
+- 스프링 위와 같은 문제를 해결하기 위해 Profile을 통해 환경에 따른 bean 구성 기능을 제공한다
+- 각 profile을 상수값으로 저장할 클래스를 만든다. 
+
+</br>
+
+> @Profile : 특정 환경에 빈이 동작하도록 profile을 지정한다. </br>
+@ActiveProfile : 테스트 환경이 특정 profile으로 동작하도록 지정한다. </br>
+
+
+</br>
+
+#### 런타임 환경에서 프로파일을 설정
+
+</br>
+
+1. applicationContext에 setProfile() 메서드를 통해 지정한다 (프로파일을 지정한 후에 컨텍스트가 생성되도록 해야함) </br>
+
+
+2. vm argument로 profile을 전달하여 실행 (intellij 기준)
+
+ - edit configurations > modify options > add vm options > 아래 코드 추가
+> -Dspring.profiles.active=프로파일 이름
+
+
+</br>
+
+--- 
+
+### 스프링 로깅
+
+</br>
+
+- 스프링은 SLF4J와 Log4j 로깅 프레임워크를 기본  라이브러리로 사용한다
+- slf4j는 추상 로깅 프레임워크이기 떄문에 단독으로는 로깅이 불가능 하다.
+
+
+
+
+
+
+
+</br>
+
 
 
 

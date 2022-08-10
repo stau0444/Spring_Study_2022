@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 
 @Configuration
-@ComponentScan
+@ComponentScan(basePackages = "moviebuddy")
 @Import({
         MovieBuddyFactory.DataSourceModuleConfig.class,
         MovieBuddyFactory.DomainModuleConfig.class

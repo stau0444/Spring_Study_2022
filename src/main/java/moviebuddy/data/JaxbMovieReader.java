@@ -1,9 +1,8 @@
-package moviebuddy.domain;
+package moviebuddy.data;
 
 import moviebuddy.ApplicationException;
-import moviebuddy.Movie;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Component;
+import moviebuddy.domain.Movie;
+import moviebuddy.domain.MovieReader;
 import org.springframework.stereotype.Repository;
 
 import javax.xml.bind.JAXBContext;
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-public class JaxbMovieReader implements MovieReader{
+public class JaxbMovieReader implements MovieReader {
 
 
     @Override

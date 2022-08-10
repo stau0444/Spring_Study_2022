@@ -220,6 +220,62 @@ $❯ build/moviebuddy/bin/moviebuddy
     }
 ````
 
+</br>
+
+#### 각 레벨별 autowiring 특징
+
+1. field level 
+    - 필드에 직접 @Autowired 어노테이션을 달아주면 된다.
+    - 외부에서 변경이 힘들어지기 떄문에 테스트가 힘들어진다 . 
+
+</br>
+
+
+
+---
+
+</br>
+
+### Spring Test
+
+- 스프링의 포조 프로그래밍은 테스트를 손쉽게 작성할 수 있는 환경을 제공하고 
+- 기술에 종속되지 않는 코드를 작성할 수 있게 해준다.
+- 애플리케이션을 서버에 배치하거나 테스트 서버에 연결하지 않아
+
+>@SpringJUnitConfig: @ExtendWith,@ContextConfiguration 어노테이션이 합쳐진 어노테이션 </br>
+</br>
+@ExtendWith(SpringExtension.class):  테스트 실행 전략을 확장할 떄 사용하는 애노테이션 </br>
+*SpringExtension.class : 스프링 테스트에서 제공하는 Junit 지원 클래스 </br>
+</br>
+@ContextConfiguration : 테스트 컨텍스트의 빈구성정보를 지정하는 애노테이션 빈구성 정보 클래스를 classes옵션으로 넘겨주면 된다.</br>
+
+
+---
+
+</br>
+
+### 엔터프라이즈 애플리케이션의 계층
+
+</br>
+
+<b>presentation </b>: 사용자와 소프트 웨어간 상호작용을 처리
+
+v
+</br> 
+
+<b>domain </b> : 핵심 업무 논리를 처리하는 객체들로 구성되며 애플리케이션에서 가장 중요한 자산이다.
+</br> 
+v
+</br> 
+<b>persistance</b> : 파일 또는 데이터베이스 시스템 등과 데이터 송/수신 처리를 맡는다.
+
+---
+<br/>
+
+### separated interface pattern
+
+
+
 
 
 

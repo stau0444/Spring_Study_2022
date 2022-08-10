@@ -1,9 +1,6 @@
 package moviebuddy.domain;
 
-import moviebuddy.Movie;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +16,8 @@ public class MovieFinder {
     // 해당 결정을 외부에서 결정할 필요가 있다.
     private final MovieReader movieReader;
 
-    @Autowired
-    public MovieFinder(MovieReader csvReader) {
-        this.movieReader = Objects.requireNonNull(csvReader);
+    public MovieFinder(@Qualifier("csvMovieReader") MovieReader movieReader) {
+        this.movieReader = Objects.requireNonNull(movieReader);
     }
 
     /**

@@ -313,7 +313,9 @@ v
 2. vm argument로 profile을 전달하여 실행 (intellij 기준)
 
  - edit configurations > modify options > add vm options > 아래 코드 추가
-> -Dspring.profiles.active=프로파일 이름
+````
+-Dspring.profiles.active=프로파일 이름
+````
 
 
 </br>
@@ -325,14 +327,39 @@ v
 - 스프링은 SLF4J와 Log4j 로깅 프레임워크를 기본  라이브러리로 사용한다
 - slf4j는 추상 로깅 프레임워크이기 떄문에 단독으로는 로깅이 불가능 하다.
 
-//git test
-
-
-
-
-
 </br>
 
+--- 
+
+### Portable Service Abstraction (PSA)
+
+- 환경과 구현 기술의 변경과 무관하게 일관된 방식으로 기술을 다룰 수 있게 지원한다. 
+- 엔터프라이즈 애플리케이션에 사용되는 다양한 기술의 서비스 추상화가 제공된다. 
+- 제어의 역전 원리를 통해 POJO에게 제공된다.
+
+
+---
+
+### Bean 생명주기 관여
+
+#### 1.callback Interface
+
+- 빈의 생성과 소멸 시점에 원하는 코드를 수행시킬 수 있다.
+- InitializingBean인터페이스의 afterPropertiesSet() 메서드를 통해 bean에 의존성 주입이 완료되고 생성되는 시점에 개입할 수 있다.
+- Disoposable 인터페이스의 destroy() 메서드를 통해 빈이 소멸하는 시점에 개입할 수 있다.
+
+#### 2.애노테이션을 활용
+
+- JSR250으로 정의되어 있는 자바 표준 애노테이션을 사용해 빈의 생명주기에 관여할 수 있다.
+- JSR250은 자바 플랫폼을 위한 콩통 애노테이션에 관한 스펙이다.
+> https://en.wikipedia.org/wiki/Jakarta_Annotations (wikipidia JSR250 링크) 
+- @PostConstruct , @PreDestroy로 빈의 생명주기에 관여할 수 있다.
+- 특정규약과 환경에 종속되지 않고 객체를 작성하기 위해서는
+- 초기화 또는 소멸시 필요한 작업은 표준 애노테이션을 사용하는 것이 좋다.
+- JSR250 사용을 위해 아래의 의존성이 필요하다.
+````
+'javax.annotation:javax.annotation-api:1.3.2'
+````
 
 
 

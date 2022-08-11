@@ -5,9 +5,16 @@ import moviebuddy.MovieBuddyProfile;
 import moviebuddy.domain.Movie;
 import moviebuddy.domain.MovieReader;
 import moviebuddy.util.FileSystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,23 +24,34 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Profile(MovieBuddyProfile.CSV_MODE)
 @Repository
-public class CsvMovieReader implements MovieReader {
+public class CsvMovieReader implements MovieReader{
     /**
      * 영화 메타데이터를 읽어 저장된 영화 목록을 불러온다.
      *
      * @return 불러온 영화 목록
      */
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private String metadata;
+
+    public String getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(String metadata){
+        this.metadata = metadata;
+    }
 
     @Override
     public List<Movie> loadMovies() {
         System.out.println("loaded from csv file");
         try {
-            final URI resourceUri = ClassLoader.getSystemResource("movie_metadata.csv").toURI();
+            final URI resourceUri = ClassLoader.getSystemResource(getMetadata()).toURI();
             final Path data = Path.of(FileSystemUtils.checkFileSystem(resourceUri));
             final Function<String, Movie> mapCsv = csv -> {
                 try {
@@ -64,5 +82,21 @@ public class CsvMovieReader implements MovieReader {
         } catch (IOException | URISyntaxException error) {
             throw new ApplicationException("failed to load movies data.", error);
         }
+    }
+
+    @PostConstruct
+    public void afterPropertiesSet() throws Exception {
+        URL url = ClassLoader.getSystemResource(metadata);
+        if(Objects.isNull(url)){
+            throw new FileNotFoundException();
+        }
+        if(!Files.isReadable(Path.of(url.toURI()))){
+            throw new ApplicationException(String.format("cannot read to metadata. [%s]",metadata));
+        }
+    }
+
+    @PreDestroy
+    public void destroy() throws Exception {
+        logger.info("Destroyed bean");
     }
 }

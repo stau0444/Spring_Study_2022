@@ -1,12 +1,16 @@
 package moviebuddy.domain;
 
 
+import moviebuddy.MovieBuddyProfile;
+import moviebuddy.data.CsvMovieReader;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
+import org.springframework.oxm.Unmarshaller;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 @Configuration
 @ComponentScan(basePackages = "moviebuddy")
@@ -30,12 +34,25 @@ public class MovieBuddyFactory {
      */
 
     @Configuration
-    static class DomainModuleConfig{
+    public static class DomainModuleConfig{
 
     }
     @Configuration
-    static class DataSourceModuleConfig{
-     
+    public static class DataSourceModuleConfig{
+        @Profile(MovieBuddyProfile.CSV_MODE)
+        @Bean
+        public CsvMovieReader csvMovieReader() throws FileNotFoundException, URISyntaxException {
+            CsvMovieReader csvMovieReader = new CsvMovieReader();
+            csvMovieReader.setMetadata("movie_metadata.csv");
+            return csvMovieReader;
+        }
+    }
+    @Bean
+    public Jaxb2Marshaller Jaxb2Marshaller(){
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        //지정한 패키지를 스캔하여 xml을 java 객체로 변환하는데 사용할 클래스를 탐색한다
+        marshaller.setPackagesToScan("moviebuddy");
+        return marshaller;
     }
 
 }

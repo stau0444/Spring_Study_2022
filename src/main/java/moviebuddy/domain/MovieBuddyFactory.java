@@ -1,18 +1,34 @@
 package moviebuddy.domain;
 
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import moviebuddy.MovieBuddyProfile;
 import moviebuddy.data.CsvMovieReader;
+import moviebuddy.data.XmlMovieReader;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.EhcacheCoreInit;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
+import org.springframework.cache.ehcache.EhCacheCache;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.Environment;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
+@PropertySource("/application.properties")
 @ComponentScan(basePackages = "moviebuddy")
 @Import({
         MovieBuddyFactory.DataSourceModuleConfig.class,
@@ -39,13 +55,13 @@ public class MovieBuddyFactory {
     }
     @Configuration
     public static class DataSourceModuleConfig{
-        @Profile(MovieBuddyProfile.CSV_MODE)
         @Bean
-        public CsvMovieReader csvMovieReader() throws FileNotFoundException, URISyntaxException {
-            CsvMovieReader csvMovieReader = new CsvMovieReader();
-            csvMovieReader.setMetadata("movie_metadata.csv");
-            return csvMovieReader;
+        public CaffeineCacheManager ehCacheCacheManager(){
+            CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+            cacheManager.setCaffeine(Caffeine.newBuilder().expireAfterWrite(3,TimeUnit.SECONDS));
+            return cacheManager;
         }
+
     }
     @Bean
     public Jaxb2Marshaller Jaxb2Marshaller(){

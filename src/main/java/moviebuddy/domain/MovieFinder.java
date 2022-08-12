@@ -3,6 +3,7 @@ package moviebuddy.domain;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +28,7 @@ public class MovieFinder {
      * @param directedBy 감독
      * @return 검색된 영화 목록
      */
-    public List<Movie> directedBy(String directedBy) {
+    public List<Movie> directedBy(String directedBy){
         return movieReader.loadMovies().stream()
                 .filter(it -> it.getDirector().toLowerCase().contains(directedBy.toLowerCase()))
                 .collect(Collectors.toList());

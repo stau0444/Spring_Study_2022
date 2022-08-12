@@ -4,24 +4,14 @@ import moviebuddy.ApplicationException;
 import moviebuddy.MovieBuddyProfile;
 import moviebuddy.domain.Movie;
 import moviebuddy.domain.MovieReader;
-import moviebuddy.util.FileSystemUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -30,29 +20,33 @@ import java.util.stream.Collectors;
 
 @Profile(MovieBuddyProfile.CSV_MODE)
 @Repository
-public class CsvMovieReader implements MovieReader{
+public class CsvMovieReader extends AbstractMetadataResourceMovieReader implements MovieReader{
+
     /**
      * 영화 메타데이터를 읽어 저장된 영화 목록을 불러온다.
      *
      * @return 불러온 영화 목록
      */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-    private String metadata;
 
-    public String getMetadata() {
-        return metadata;
-    }
+    private  final CacheManager cacheManager;
 
-    public void setMetadata(String metadata){
-        this.metadata = metadata;
+    public CsvMovieReader(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 
     @Override
     public List<Movie> loadMovies() {
         System.out.println("loaded from csv file");
+        //캐시에 저장된 데이터가 있으면 즉시반환
+        //스프링 캐시 추상화 인터페이스 사용
+        Cache cache = cacheManager.getCache(getClass().getName());
+        List<Movie> movies = cache.get("csv.movies", List.class);
+        if (movies != null && movies.size()>0) {
+            return movies;
+        }
         try {
-            final URI resourceUri = ClassLoader.getSystemResource(getMetadata()).toURI();
-            final Path data = Path.of(FileSystemUtils.checkFileSystem(resourceUri));
+            //원격의 리소스를 매번 내려받아서 인풋 스트림을 얻어내고 있어 속도가 느리다
+            final InputStream content = getMedataResource().getInputStream();
             final Function<String, Movie> mapCsv = csv -> {
                 try {
                     // split with comma
@@ -74,29 +68,15 @@ public class CsvMovieReader implements MovieReader{
                 }
             };
 
-            return Files.readAllLines(data, StandardCharsets.UTF_8)
-                    .stream()
+             movies = new BufferedReader(new InputStreamReader(content,StandardCharsets.UTF_8))
+                    .lines()
                     .skip(1)
                     .map(mapCsv)
                     .collect(Collectors.toList());
-        } catch (IOException | URISyntaxException error) {
+        } catch (IOException error) {
             throw new ApplicationException("failed to load movies data.", error);
         }
-    }
-
-    @PostConstruct
-    public void afterPropertiesSet() throws Exception {
-        URL url = ClassLoader.getSystemResource(metadata);
-        if(Objects.isNull(url)){
-            throw new FileNotFoundException();
-        }
-        if(!Files.isReadable(Path.of(url.toURI()))){
-            throw new ApplicationException(String.format("cannot read to metadata. [%s]",metadata));
-        }
-    }
-
-    @PreDestroy
-    public void destroy() throws Exception {
-        logger.info("Destroyed bean");
+        cache.put("csv.movies",movies);
+        return movies;
     }
 }

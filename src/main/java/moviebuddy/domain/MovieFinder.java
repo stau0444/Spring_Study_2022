@@ -18,7 +18,7 @@ public class MovieFinder {
     // 해당 결정을 외부에서 결정할 필요가 있다.
     private final MovieReader movieReader;
 
-    public MovieFinder(MovieReader movieReader) {
+    public MovieFinder( MovieReader movieReader) {
         this.movieReader = Objects.requireNonNull(movieReader);
     }
 

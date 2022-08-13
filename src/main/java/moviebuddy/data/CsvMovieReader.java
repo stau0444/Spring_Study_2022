@@ -27,23 +27,9 @@ public class CsvMovieReader extends AbstractMetadataResourceMovieReader implemen
      *
      * @return 불러온 영화 목록
      */
-
-    private  final CacheManager cacheManager;
-
-    public CsvMovieReader(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
-    }
-
     @Override
     public List<Movie> loadMovies() {
         System.out.println("loaded from csv file");
-        //캐시에 저장된 데이터가 있으면 즉시반환
-        //스프링 캐시 추상화 인터페이스 사용
-        Cache cache = cacheManager.getCache(getClass().getName());
-        List<Movie> movies = cache.get("csv.movies", List.class);
-        if (movies != null && movies.size()>0) {
-            return movies;
-        }
         try {
             //원격의 리소스를 매번 내려받아서 인풋 스트림을 얻어내고 있어 속도가 느리다
             final InputStream content = getMedataResource().getInputStream();
@@ -68,7 +54,7 @@ public class CsvMovieReader extends AbstractMetadataResourceMovieReader implemen
                 }
             };
 
-             movies = new BufferedReader(new InputStreamReader(content,StandardCharsets.UTF_8))
+             return new BufferedReader(new InputStreamReader(content,StandardCharsets.UTF_8))
                     .lines()
                     .skip(1)
                     .map(mapCsv)
@@ -76,7 +62,5 @@ public class CsvMovieReader extends AbstractMetadataResourceMovieReader implemen
         } catch (IOException error) {
             throw new ApplicationException("failed to load movies data.", error);
         }
-        cache.put("csv.movies",movies);
-        return movies;
     }
 }

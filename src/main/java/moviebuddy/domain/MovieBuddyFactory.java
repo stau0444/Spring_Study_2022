@@ -14,7 +14,10 @@ import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurer;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
+import org.springframework.cache.interceptor.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -29,7 +32,8 @@ import java.util.concurrent.TimeUnit;
         MovieBuddyFactory.DataSourceModuleConfig.class,
         MovieBuddyFactory.DomainModuleConfig.class
 })
-@EnableAspectJAutoProxy
+//@EnableAspectJAutoProxy
+@EnableCaching
 public class MovieBuddyFactory {
 
     @Configuration
@@ -37,17 +41,37 @@ public class MovieBuddyFactory {
 
     }
     @Configuration
-    public static class DataSourceModuleConfig{
+    public static class DataSourceModuleConfig implements CachingConfigurer {
         @Bean
-        public CaffeineCacheManager ehCacheCacheManager(){
+        public CaffeineCacheManager caffeineCacheManager(){
             CaffeineCacheManager cacheManager = new CaffeineCacheManager();
             cacheManager.setCaffeine(Caffeine.newBuilder().expireAfterWrite(3,TimeUnit.SECONDS));
             return cacheManager;
         }
-        @Bean
-        public CachingAspect cachingAspect(CacheManager cacheManager){
-            return new CachingAspect(cacheManager);
+
+        @Override
+        public CacheManager cacheManager() {
+            return caffeineCacheManager();
         }
+
+        @Override
+        public CacheResolver cacheResolver() {
+            return new SimpleCacheResolver(caffeineCacheManager());
+        }
+
+        @Override
+        public KeyGenerator keyGenerator() {
+            return new SimpleKeyGenerator();
+        }
+
+        @Override
+        public CacheErrorHandler errorHandler() {
+            return new SimpleCacheErrorHandler();
+        }
+//        @Bean
+//        public CachingAspect cachingAspect(CacheManager cacheManager){
+//            return new CachingAspect(cacheManager);
+//        }
 //        @Bean
 //        public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator(){
 //            return new DefaultAdvisorAutoProxyCreator();

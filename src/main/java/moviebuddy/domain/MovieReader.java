@@ -1,5 +1,6 @@
 package moviebuddy.domain;
 
+import moviebuddy.annotation.PerformanceCheck;
 import moviebuddy.domain.Movie;
 
 import javax.cache.annotation.CacheResult;

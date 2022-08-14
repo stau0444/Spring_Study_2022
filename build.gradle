@@ -24,6 +24,7 @@ dependencies {
     // https://mvnrepository.com/artifact/net.sf.ehcache/ehcache-core
     implementation group: 'net.sf.ehcache', name: 'ehcache-core', version: '2.6.11'
 
+    implementation 'javax.cache:cache-api:1.1.1'
 
 }
 

@@ -9,6 +9,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
+import javax.cache.annotation.CacheResult;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;

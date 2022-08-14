@@ -3,6 +3,7 @@ package moviebuddy.domain;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import moviebuddy.cache.CachingAdvice;
+import moviebuddy.cache.CachingAspect;
 import moviebuddy.data.CachingMovieReader;
 import org.aopalliance.aop.Advice;
 import org.springframework.aop.Advisor;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
         MovieBuddyFactory.DataSourceModuleConfig.class,
         MovieBuddyFactory.DomainModuleConfig.class
 })
+@EnableAspectJAutoProxy
 public class MovieBuddyFactory {
 
     @Configuration
@@ -43,18 +45,22 @@ public class MovieBuddyFactory {
             return cacheManager;
         }
         @Bean
-        public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator(){
-            return new DefaultAdvisorAutoProxyCreator();
+        public CachingAspect cachingAspect(CacheManager cacheManager){
+            return new CachingAspect(cacheManager);
         }
-
-        //자동 프락시 생성을 위한 Advisor 빈
-        @Bean
-        public Advisor cachingAdvisor(CacheManager cacheManager){
-            AnnotationMatchingPointcut pointcut = new AnnotationMatchingPointcut(null, CacheResult.class);
-            Advice advice = new CachingAdvice(cacheManager);
-            //Advisor = PointCut(대상선정) + Advice(부가기능)
-            return new DefaultPointcutAdvisor(pointcut,advice);
-        }
+//        @Bean
+//        public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator(){
+//            return new DefaultAdvisorAutoProxyCreator();
+//        }
+//
+//        //자동 프락시 생성을 위한 Advisor 빈
+//        @Bean
+//        public Advisor cachingAdvisor(CacheManager cacheManager){
+//            AnnotationMatchingPointcut pointcut = new AnnotationMatchingPointcut(null, CacheResult.class);
+//            Advice advice = new CachingAdvice(cacheManager);
+//            //Advisor = PointCut(대상선정) + Advice(부가기능)
+//            return new DefaultPointcutAdvisor(pointcut,advice);
+//        }
     }
     @Bean
     public Jaxb2Marshaller Jaxb2Marshaller(){
